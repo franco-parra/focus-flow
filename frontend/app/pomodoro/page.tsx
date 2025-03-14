@@ -312,25 +312,29 @@ export default function PomodoroPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-xl text-center">
-              {mode === "focus" ? "Tiempo de Enfoque" : "Tiempo de Descanso"}
+              {mode === "focus" ? "Focus Time" : "Break Time"}
             </CardTitle>
             <CardDescription className="text-center">
-              Selecciona una tarea e ítem para comenzar tu sesión de Pomodoro
+              Select a task and item to start your Pomodoro session
             </CardDescription>
           </CardHeader>
 
           <CardContent>
             <div className="flex flex-col space-y-6">
-              {/* Sección de selección de tareas e ítems */}
+              {/* Task and item selection section */}
               <div className="space-y-2">
-                <h3 className="">1. Selecciona un ítem de una tarea</h3>
+                <h3 className="">1. Select an item from a task</h3>
                 <Select
                   onValueChange={(value) => {
                     const [taskId, itemId] = value.split("|");
                     handleTaskChange(taskId);
                     handleItemChange(itemId);
                   }}
-                  value={`${selectedTaskId}|${selectedItemId}`}
+                  value={
+                    selectedTaskId && selectedItemId
+                      ? `${selectedTaskId}|${selectedItemId}`
+                      : undefined
+                  }
                   disabled={isActive}
                 >
                   <SelectTrigger className="w-full">
@@ -355,13 +359,13 @@ export default function PomodoroPage() {
                 </Select>
               </div>
 
-              {/* Sección de configuración de tiempo */}
+              {/* Timer configuration section */}
               <div className="space-y-2">
-                <h3 className="">2. Configura el temporizador</h3>
+                <h3 className="">2. Configure the timer</h3>
                 <Tabs defaultValue="presets" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="presets">Presets</TabsTrigger>
-                    <TabsTrigger value="custom">Personalizado</TabsTrigger>
+                    <TabsTrigger value="custom">Custom</TabsTrigger>
                   </TabsList>
                   <TabsContent value="presets" className="space-y-4">
                     <div className="grid grid-cols-2 gap-2">
@@ -384,7 +388,7 @@ export default function PomodoroPage() {
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-sm">
-                            Tiempo de enfoque: {focusMinutes} min
+                            Focus time: {focusMinutes} min
                           </span>
                         </div>
                         <Slider
@@ -403,7 +407,7 @@ export default function PomodoroPage() {
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span>Tiempo de descanso: {breakMinutes} min</span>
+                          <span>Break time: {breakMinutes} min</span>
                         </div>
                         <Slider
                           value={[breakMinutes]}
@@ -420,16 +424,16 @@ export default function PomodoroPage() {
                         />
                       </div>
                       {/* <Button onClick={resetTimer} className="w-full">
-                        Aplicar
+                        Apply
                       </Button> */}
                     </div>
                   </TabsContent>
                 </Tabs>
               </div>
 
-              {/* Sección del temporizador */}
+              {/* Timer section */}
               <div className="flex flex-col items-center space-y-4">
-                <h3 className="w-full">3. Comienza tu sesión</h3>
+                <h3 className="w-full">3. Start your session</h3>
                 <div className="text-6xl font-bold">
                   {formatTime(secondsLeft)}
                 </div>
@@ -443,8 +447,8 @@ export default function PomodoroPage() {
                       disabled={!selectedTask || !selectedItem}
                       title={
                         !selectedTask || !selectedItem
-                          ? "Selecciona una tarea y actividad primero"
-                          : "Iniciar"
+                          ? "Select a task and item first"
+                          : "Start"
                       }
                     >
                       <Play className="h-4 w-4" />
@@ -454,7 +458,7 @@ export default function PomodoroPage() {
                       onClick={pauseTimer}
                       size="icon"
                       variant="outline"
-                      title="Pausar"
+                      title="Pause"
                     >
                       <Pause className="h-4 w-4" />
                     </Button>
@@ -463,7 +467,7 @@ export default function PomodoroPage() {
                     onClick={() => resetTimer(focusMinutes)}
                     size="icon"
                     variant="outline"
-                    title="Reiniciar"
+                    title="Reset"
                   >
                     <RotateCcw className="h-4 w-4" />
                   </Button>
@@ -474,8 +478,8 @@ export default function PomodoroPage() {
                     disabled={!selectedTask || !selectedItem}
                     title={
                       !selectedTask || !selectedItem
-                        ? "Selecciona una tarea y actividad primero"
-                        : "Marcar como completado"
+                        ? "Select a task and item first"
+                        : "Mark as completed"
                     }
                   >
                     <Check className="h-4 w-4" />
@@ -487,8 +491,8 @@ export default function PomodoroPage() {
           <CardFooter className="flex justify-center">
             <p className="text-sm text-muted-foreground">
               {mode === "focus"
-                ? "Concéntrate en tu tarea actual"
-                : "Tómate un descanso, lo mereces"}
+                ? "Focus on your current task"
+                : "Take a break, you deserve it"}
             </p>
           </CardFooter>
         </Card>
