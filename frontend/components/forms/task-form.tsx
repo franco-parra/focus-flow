@@ -31,6 +31,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 interface Item {
   id: string;
@@ -129,40 +130,32 @@ export function EditTaskForm({
   const generateItemsWithAI = async (task: Task) => {
     setIsGeneratingItems(true);
 
-    // Simulación de llamada a API de IA
-    // En un caso real, aquí harías una llamada a tu API de IA
-    setTimeout(() => {
-      const mockGeneratedItems = [
-        {
-          id: `ai-${Date.now()}-1`,
-          title: "Recopilar datos de ventas del último trimestre",
-          completed: false,
-          selected: true,
-        },
-        {
-          id: `ai-${Date.now()}-2`,
-          title: "Analizar tendencias de crecimiento por región",
-          completed: false,
-          selected: true,
-        },
-        {
-          id: `ai-${Date.now()}-3`,
-          title: "Preparar gráficos comparativos",
-          completed: false,
-          selected: true,
-        },
-        {
-          id: `ai-${Date.now()}-4`,
-          title: "Revisar presentación con supervisor",
-          completed: false,
-          selected: true,
-        },
-      ];
-
-      setGeneratedItems(mockGeneratedItems);
+    try {
+      const response = await fetch("/api/generate-items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task }),
+      });
+      const data: {
+        status: "success" | "error";
+        message: string;
+        data?: Item[];
+      } = await response.json();
+      if (data.status === "error") {
+        throw new Error(data.message);
+      }
+      const { data: items } = data;
+      if (items && items.length > 0) {
+        setGeneratedItems(items.map((item) => ({ ...item, selected: true })));
+        setShowAIOptions(true);
+      }
+    } catch (error) {
+      toast.error("Generate Items", {
+        description: "Failed to generate items.",
+      });
+    } finally {
       setIsGeneratingItems(false);
-      setShowAIOptions(true);
-    }, 1500);
+    }
   };
 
   const toggleGeneratedItem = (id: string) => {
@@ -507,40 +500,32 @@ export function CreateTaskForm({ onSubmit, isCreating }: CreateTaskFormProps) {
   const generateItemsWithAI = async (task: Task) => {
     setIsGeneratingItems(true);
 
-    // Simulación de llamada a API de IA
-    // En un caso real, aquí harías una llamada a tu API de IA
-    setTimeout(() => {
-      const mockGeneratedItems = [
-        {
-          id: `ai-${Date.now()}-1`,
-          title: "Recopilar datos de ventas del último trimestre",
-          completed: false,
-          selected: true,
-        },
-        {
-          id: `ai-${Date.now()}-2`,
-          title: "Analizar tendencias de crecimiento por región",
-          completed: false,
-          selected: true,
-        },
-        {
-          id: `ai-${Date.now()}-3`,
-          title: "Preparar gráficos comparativos",
-          completed: false,
-          selected: true,
-        },
-        {
-          id: `ai-${Date.now()}-4`,
-          title: "Revisar presentación con supervisor",
-          completed: false,
-          selected: true,
-        },
-      ];
-
-      setGeneratedItems(mockGeneratedItems);
+    try {
+      const response = await fetch("/api/generate-items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task }),
+      });
+      const data: {
+        status: "success" | "error";
+        message: string;
+        data?: Item[];
+      } = await response.json();
+      if (data.status === "error") {
+        throw new Error(data.message);
+      }
+      const { data: items } = data;
+      if (items && items.length > 0) {
+        setGeneratedItems(items.map((item) => ({ ...item, selected: true })));
+        setShowAIOptions(true);
+      }
+    } catch (error) {
+      toast.error("Generate Items", {
+        description: "Failed to generate items.",
+      });
+    } finally {
       setIsGeneratingItems(false);
-      setShowAIOptions(true);
-    }, 1500);
+    }
   };
 
   const toggleGeneratedItem = (id: string) => {
