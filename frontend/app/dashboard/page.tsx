@@ -209,6 +209,8 @@ export default function DashboardPage() {
     }
   };
 
+  const handleLogout = () => router.push("/");
+
   const TaskCard = ({
     task,
     onToggleExpand,
@@ -379,7 +381,7 @@ export default function DashboardPage() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       {/* Sidebar */}
-      <SidebarNav />
+      <SidebarNav onLogout={handleLogout} />
 
       {/* Floating button for new task */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>

@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, PieChart, Timer } from "lucide-react";
+import { LayoutDashboard, PieChart, Timer, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function SidebarNav() {
+export default function SidebarNav({ onLogout }: { onLogout: () => void }) {
   const pathname = usePathname();
 
   const navItems = [
@@ -48,6 +48,13 @@ export default function SidebarNav() {
           </Link>
         ))}
       </nav>
+      <button
+        onClick={onLogout}
+        className="flex items-center w-full p-3 text-red-600 hover:bg-red-50 rounded-md mt-auto"
+      >
+        <LogOut className="mr-3 h-5 w-5" />
+        Cerrar sesión
+      </button>
     </div>
   );
 }

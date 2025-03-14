@@ -305,9 +305,11 @@ export default function PomodoroPage() {
     setSelectedItemId(itemId);
   };
 
+  const handleLogout = () => router.push("/");
+
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <SidebarNav />
+      <SidebarNav onLogout={handleLogout} />
       <main className="flex-1 p-4 md:p-6 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>

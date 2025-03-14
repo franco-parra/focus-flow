@@ -77,9 +77,11 @@ export default function StatisticsPage() {
     { label: "Others", value: 2 },
   ];
 
+  const handleLogout = () => router.push("/");
+
   return (
     <div className="flex min-h-screen bg-slate-50">
-      <SidebarNav />
+      <SidebarNav onLogout={handleLogout} />
       <main className="flex-1 p-4 md:p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Statistics</h1>
