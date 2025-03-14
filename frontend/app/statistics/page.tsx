@@ -50,31 +50,31 @@ export default function StatisticsPage() {
 
   // Datos de ejemplo para las estadísticas
   const completedTasksData = [
-    { label: "Lunes", value: 3 },
-    { label: "Martes", value: 5 },
-    { label: "Miércoles", value: 2 },
-    { label: "Jueves", value: 4 },
-    { label: "Viernes", value: 6 },
-    { label: "Sábado", value: 1 },
-    { label: "Domingo", value: 0 },
+    { label: "Monday", value: 3 },
+    { label: "Tuesday", value: 5 },
+    { label: "Wednesday", value: 2 },
+    { label: "Thursday", value: 4 },
+    { label: "Friday", value: 6 },
+    { label: "Saturday", value: 1 },
+    { label: "Sunday", value: 0 },
   ];
 
   const focusTimeData = [
-    { label: "Lunes", value: 120 },
-    { label: "Martes", value: 180 },
-    { label: "Miércoles", value: 90 },
-    { label: "Jueves", value: 150 },
-    { label: "Viernes", value: 210 },
-    { label: "Sábado", value: 60 },
-    { label: "Domingo", value: 30 },
+    { label: "Monday", value: 120 },
+    { label: "Tuesday", value: 180 },
+    { label: "Wednesday", value: 90 },
+    { label: "Thursday", value: 150 },
+    { label: "Friday", value: 210 },
+    { label: "Saturday", value: 60 },
+    { label: "Sunday", value: 30 },
   ];
 
   const categoryData = [
-    { label: "Desarrollo", value: 8 },
-    { label: "Diseño", value: 5 },
-    { label: "Reuniones", value: 3 },
-    { label: "Investigación", value: 6 },
-    { label: "Otros", value: 2 },
+    { label: "Development", value: 8 },
+    { label: "Design", value: 5 },
+    { label: "Meetings", value: 3 },
+    { label: "Research", value: 6 },
+    { label: "Others", value: 2 },
   ];
 
   return (
