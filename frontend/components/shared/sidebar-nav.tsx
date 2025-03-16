@@ -53,7 +53,7 @@ export default function SidebarNav({ onLogout }: { onLogout: () => void }) {
         className="flex items-center w-full p-3 text-red-600 hover:bg-red-50 rounded-md mt-auto"
       >
         <LogOut className="mr-3 h-5 w-5" />
-        Cerrar sesión
+        Log Out
       </button>
     </div>
   );
