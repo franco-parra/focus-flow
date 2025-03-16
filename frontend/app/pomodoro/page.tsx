@@ -205,6 +205,7 @@ export default function PomodoroPage() {
   const [mode, setMode] = useState<"focus" | "break">("focus");
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [tick, setTick] = useState(0);
 
   // Configuración de tiempos
   const [focusMinutes, setFocusMinutes] = useState(25);
@@ -215,11 +216,11 @@ export default function PomodoroPage() {
     { focus: 25, break: 5, id: "Pomodoro" },
     { focus: 50, break: 10, id: "Long" },
     { focus: 90, break: 20, id: "Extended" },
-    { focus: 1 / 6, break: 1 / 6, id: "Demo" },
+    { focus: 1 / 12, break: 1 / 12, id: "Demo" },
   ];
 
   // Estado para el preset seleccionado
-  const [selectedPreset, setSelectedPreset] = useState<string>("Pomodoro");
+  const [selectedPreset, setSelectedPreset] = useState<string>("Demo");
 
   // Efecto para el temporizador
   useEffect(() => {
@@ -227,34 +228,13 @@ export default function PomodoroPage() {
 
     if (isActive && !isPaused) {
       interval = setInterval(() => {
-        setSecondsLeft((seconds) => {
-          if (
-            isSoundEnabled &&
-            mode === "break" &&
-            seconds > 1 &&
-            seconds <= 4
-          ) {
-            countdownSound?.play();
+        setTick((tick) => {
+          if (secondsLeft <= 1) {
+            clearInterval(interval as NodeJS.Timeout);
+            return tick + 1;
           }
 
-          if (seconds <= 1) {
-            clearInterval(interval as NodeJS.Timeout);
-            // Cambiar de modo cuando el temporizador llega a cero
-            if (mode === "focus") {
-              if (isSoundEnabled) {
-                breakSound?.play();
-              }
-              setMode("break");
-              return breakMinutes * 60;
-            } else {
-              if (isSoundEnabled) {
-                focusSound?.play();
-              }
-              setMode("focus");
-              return focusMinutes * 60;
-            }
-          }
-          return seconds - 1;
+          return tick + 1;
         });
       }, 1000);
     }
@@ -262,7 +242,39 @@ export default function PomodoroPage() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, isPaused, mode, focusMinutes, breakMinutes, isSoundEnabled]);
+  }, [isActive, isPaused, secondsLeft]);
+
+  useEffect(() => {
+    setSecondsLeft((seconds) => {
+      if (seconds <= 1) {
+        // Cambiar de modo cuando el temporizador llega a cero
+        if (mode === "focus") {
+          setMode("break");
+          return breakMinutes * 60;
+        } else {
+          setMode("focus");
+          return focusMinutes * 60;
+        }
+      }
+      return seconds - 1;
+    });
+  }, [tick]);
+
+  useEffect(() => {
+    if (!isSoundEnabled || !isActive || isPaused) return;
+
+    if (mode === "break") {
+      if (secondsLeft === breakMinutes * 60) {
+        breakSound?.play();
+      } else if (secondsLeft >= 1 && secondsLeft <= 3) {
+        countdownSound?.play();
+      }
+    } else if (mode === "focus") {
+      if (secondsLeft === focusMinutes * 60) {
+        focusSound?.play();
+      }
+    }
+  }, [mode, isSoundEnabled, secondsLeft, isActive, isPaused]);
 
   // Formatear tiempo para mostrar
   const formatTime = (seconds: number) => {
@@ -275,18 +287,25 @@ export default function PomodoroPage() {
 
   // Controles del temporizador
   const startTimer = () => {
+    // Si ya está activo, solo quitamos la pausa
+    if (isActive) {
+      setIsPaused(false);
+      return;
+    }
+
+    // Si es la primera vez que se inicia
     setIsActive(true);
     setIsPaused(false);
 
-    if (mode === "focus") {
-      if (isSoundEnabled) {
+    if (isSoundEnabled) {
+      if (mode === "focus") {
         focusSound?.play();
-      }
-    } else {
-      if (isSoundEnabled) {
+      } else {
         breakSound?.play();
       }
     }
+
+    setSecondsLeft((seconds) => seconds - 1);
   };
 
   const pauseTimer = () => {
