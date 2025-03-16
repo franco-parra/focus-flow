@@ -215,10 +215,7 @@ export function EditTaskForm({
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Preparar presentación de ventas"
-                  {...field}
-                />
+                <Input placeholder="What is your task titled?" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -232,7 +229,7 @@ export function EditTaskForm({
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Planificar campaña de marketing para el lanzamiento de nuevo producto"
+                  placeholder="What does your task consist of?"
                   {...field}
                 />
               </FormControl>
@@ -582,10 +579,7 @@ export function CreateTaskForm({ onSubmit, isCreating }: CreateTaskFormProps) {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Preparar presentación de ventas"
-                  {...field}
-                />
+                <Input placeholder="What is your task titled?" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -599,7 +593,7 @@ export function CreateTaskForm({ onSubmit, isCreating }: CreateTaskFormProps) {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Planificar campaña de marketing para el lanzamiento de nuevo producto"
+                  placeholder="What does your task consist of?"
                   {...field}
                 />
               </FormControl>
