@@ -229,7 +229,7 @@ export function EditTaskForm({
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="What does your task consist of?"
+                  placeholder="What does your task consist of? (optional)"
                   {...field}
                 />
               </FormControl>
@@ -593,7 +593,7 @@ export function CreateTaskForm({ onSubmit, isCreating }: CreateTaskFormProps) {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="What does your task consist of?"
+                  placeholder="What does your task consist of? (optional)"
                   {...field}
                 />
               </FormControl>
@@ -631,6 +631,7 @@ export function CreateTaskForm({ onSubmit, isCreating }: CreateTaskFormProps) {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
+                    disabled={(date) => date < new Date()}
                     initialFocus
                   />
                 </PopoverContent>
