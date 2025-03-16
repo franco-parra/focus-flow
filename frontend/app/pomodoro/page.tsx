@@ -22,6 +22,8 @@ import {
   RotateCcw,
   Check,
   ChevronDown,
+  Bell,
+  BellOff,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -64,6 +66,13 @@ export default function PomodoroPage() {
   const initialItemId = searchParams.get("itemId");
   const initialTaskTitle = searchParams.get("taskTitle") || "Tarea";
   const initialItemTitle = searchParams.get("itemTitle") || "Ítem";
+
+  const focusSound =
+    typeof Audio !== "undefined" ? new Audio("/sounds/focus-start.mp3") : null;
+  const breakSound =
+    typeof Audio !== "undefined" ? new Audio("/sounds/break-start.mp3") : null;
+  const countdownSound =
+    typeof Audio !== "undefined" ? new Audio("/sounds/countdown.mp3") : null;
 
   // Estado para almacenar todas las tareas
   const [tasks, setTasks] = useState<Task[]>([
@@ -195,6 +204,7 @@ export default function PomodoroPage() {
   const [isPaused, setIsPaused] = useState(true);
   const [mode, setMode] = useState<"focus" | "break">("focus");
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   // Configuración de tiempos
   const [focusMinutes, setFocusMinutes] = useState(25);
@@ -205,7 +215,7 @@ export default function PomodoroPage() {
     { focus: 25, break: 5, id: "Pomodoro" },
     { focus: 50, break: 10, id: "Long" },
     { focus: 90, break: 20, id: "Extended" },
-    { focus: 5, break: 2, id: "Demo" },
+    { focus: 1 / 6, break: 1 / 6, id: "Demo" },
   ];
 
   // Estado para el preset seleccionado
@@ -218,13 +228,28 @@ export default function PomodoroPage() {
     if (isActive && !isPaused) {
       interval = setInterval(() => {
         setSecondsLeft((seconds) => {
+          if (
+            isSoundEnabled &&
+            mode === "break" &&
+            seconds > 1 &&
+            seconds <= 4
+          ) {
+            countdownSound?.play();
+          }
+
           if (seconds <= 1) {
             clearInterval(interval as NodeJS.Timeout);
             // Cambiar de modo cuando el temporizador llega a cero
             if (mode === "focus") {
+              if (isSoundEnabled) {
+                breakSound?.play();
+              }
               setMode("break");
               return breakMinutes * 60;
             } else {
+              if (isSoundEnabled) {
+                focusSound?.play();
+              }
               setMode("focus");
               return focusMinutes * 60;
             }
@@ -237,7 +262,7 @@ export default function PomodoroPage() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, isPaused, mode, focusMinutes, breakMinutes]);
+  }, [isActive, isPaused, mode, focusMinutes, breakMinutes, isSoundEnabled]);
 
   // Formatear tiempo para mostrar
   const formatTime = (seconds: number) => {
@@ -252,6 +277,16 @@ export default function PomodoroPage() {
   const startTimer = () => {
     setIsActive(true);
     setIsPaused(false);
+
+    if (mode === "focus") {
+      if (isSoundEnabled) {
+        focusSound?.play();
+      }
+    } else {
+      if (isSoundEnabled) {
+        breakSound?.play();
+      }
+    }
   };
 
   const pauseTimer = () => {
@@ -494,6 +529,14 @@ export default function PomodoroPage() {
                       }
                     >
                       <Check className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      onClick={() => setIsSoundEnabled(!isSoundEnabled)}
+                      size="icon"
+                      variant="outline"
+                      title={isSoundEnabled ? "Disable sound" : "Enable sound"}
+                    >
+                      {isSoundEnabled ? <Bell /> : <BellOff />}
                     </Button>
                   </div>
                 </div>
