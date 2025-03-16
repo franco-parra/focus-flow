@@ -310,194 +310,204 @@ export default function PomodoroPage() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <SidebarNav onLogout={handleLogout} />
-      <main className="flex-1 p-4 md:p-6 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-xl text-center">
-              {mode === "focus" ? "Focus Time" : "Break Time"}
-            </CardTitle>
-            <CardDescription className="text-center">
-              Select a task and item to start your Pomodoro session
-            </CardDescription>
-          </CardHeader>
+      <main className="flex-1 p-4 md:p-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold">Pomodoro</h1>
+          <p className="text-muted-foreground">
+            Concentrate on your tasks to boost your productivity
+          </p>
+        </div>
+        <div className="flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-xl text-center">
+                {mode === "focus" ? "Focus Time" : "Break Time"}
+              </CardTitle>
+              <CardDescription className="text-center">
+                Select a task and item to start your Pomodoro session
+              </CardDescription>
+            </CardHeader>
 
-          <CardContent>
-            <div className="flex flex-col space-y-6">
-              {/* Task and item selection section */}
-              <div className="space-y-2">
-                <h3 className="">1. Select an item from a task</h3>
-                <Select
-                  onValueChange={(value) => {
-                    const [taskId, itemId] = value.split("|");
-                    handleTaskChange(taskId);
-                    handleItemChange(itemId);
-                  }}
-                  value={
-                    selectedTaskId && selectedItemId
-                      ? `${selectedTaskId}|${selectedItemId}`
-                      : undefined
-                  }
-                  disabled={isActive}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a task item" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tasks.map((task) => (
-                      <SelectGroup key={task.id}>
-                        <SelectLabel>{task.title}</SelectLabel>
-                        {task.items.map((item) => (
-                          <SelectItem
-                            key={item.id}
-                            value={`${task.id}|${item.id}`}
-                            disabled={item.completed}
-                          >
-                            {item.title}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Timer configuration section */}
-              <div className="space-y-2">
-                <h3 className="">2. Configure the timer</h3>
-                <Tabs defaultValue="presets" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="presets">Presets</TabsTrigger>
-                    <TabsTrigger value="custom">Custom</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="presets" className="space-y-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      {timePresets.map((preset, index) => (
-                        <Button
-                          key={index}
-                          variant={
-                            selectedPreset === preset.id ? "default" : "outline"
-                          }
-                          onClick={() => applyPreset(preset.id)}
-                          disabled={isActive}
-                        >
-                          {preset.id}
-                        </Button>
+            <CardContent>
+              <div className="flex flex-col space-y-6">
+                {/* Task and item selection section */}
+                <div className="space-y-2">
+                  <h3 className="">1. Select an item from a task</h3>
+                  <Select
+                    onValueChange={(value) => {
+                      const [taskId, itemId] = value.split("|");
+                      handleTaskChange(taskId);
+                      handleItemChange(itemId);
+                    }}
+                    value={
+                      selectedTaskId && selectedItemId
+                        ? `${selectedTaskId}|${selectedItemId}`
+                        : undefined
+                    }
+                    disabled={isActive}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a task item" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tasks.map((task) => (
+                        <SelectGroup key={task.id}>
+                          <SelectLabel>{task.title}</SelectLabel>
+                          {task.items.map((item) => (
+                            <SelectItem
+                              key={item.id}
+                              value={`${task.id}|${item.id}`}
+                              disabled={item.completed}
+                            >
+                              {item.title}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       ))}
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="custom" className="space-y-4">
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-sm">
-                            Focus time: {focusMinutes} min
-                          </span>
-                        </div>
-                        <Slider
-                          value={[focusMinutes]}
-                          min={5}
-                          max={90}
-                          step={5}
-                          onValueChange={(value) => {
-                            setFocusMinutes(value[0]);
-                            if (mode === "focus") {
-                              setSecondsLeft(value[0] * 60);
-                            }
-                          }}
-                          disabled={isActive}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Break time: {breakMinutes} min</span>
-                        </div>
-                        <Slider
-                          value={[breakMinutes]}
-                          min={1}
-                          max={30}
-                          step={1}
-                          onValueChange={(value) => {
-                            setBreakMinutes(value[0]);
-                            if (mode === "break") {
-                              setSecondsLeft(value[0] * 60);
-                            }
-                          }}
-                          disabled={isActive}
-                        />
-                      </div>
-                      {/* <Button onClick={resetTimer} className="w-full">
-                        Apply
-                      </Button> */}
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </div>
-
-              {/* Timer section */}
-              <div className="flex flex-col items-center space-y-4">
-                <h3 className="w-full">3. Start your session</h3>
-                <div className="text-6xl font-bold">
-                  {formatTime(secondsLeft)}
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="flex space-x-2">
-                  {!isActive || isPaused ? (
+                {/* Timer configuration section */}
+                <div className="space-y-2">
+                  <h3 className="">2. Configure the timer</h3>
+                  <Tabs defaultValue="presets" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="presets">Presets</TabsTrigger>
+                      <TabsTrigger value="custom">Custom</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="presets" className="space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        {timePresets.map((preset, index) => (
+                          <Button
+                            key={index}
+                            variant={
+                              selectedPreset === preset.id
+                                ? "default"
+                                : "outline"
+                            }
+                            onClick={() => applyPreset(preset.id)}
+                            disabled={isActive}
+                          >
+                            {preset.id}
+                          </Button>
+                        ))}
+                      </div>
+                    </TabsContent>
+                    <TabsContent value="custom" className="space-y-4">
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-sm">
+                              Focus time: {focusMinutes} min
+                            </span>
+                          </div>
+                          <Slider
+                            value={[focusMinutes]}
+                            min={5}
+                            max={90}
+                            step={5}
+                            onValueChange={(value) => {
+                              setFocusMinutes(value[0]);
+                              if (mode === "focus") {
+                                setSecondsLeft(value[0] * 60);
+                              }
+                            }}
+                            disabled={isActive}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Break time: {breakMinutes} min</span>
+                          </div>
+                          <Slider
+                            value={[breakMinutes]}
+                            min={1}
+                            max={30}
+                            step={1}
+                            onValueChange={(value) => {
+                              setBreakMinutes(value[0]);
+                              if (mode === "break") {
+                                setSecondsLeft(value[0] * 60);
+                              }
+                            }}
+                            disabled={isActive}
+                          />
+                        </div>
+                        {/* <Button onClick={resetTimer} className="w-full">
+                        Apply
+                      </Button> */}
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                {/* Timer section */}
+                <div className="flex flex-col items-center space-y-4">
+                  <h3 className="w-full">3. Start your session</h3>
+                  <div className="text-6xl font-bold">
+                    {formatTime(secondsLeft)}
+                  </div>
+
+                  <div className="flex space-x-2">
+                    {!isActive || isPaused ? (
+                      <Button
+                        onClick={startTimer}
+                        size="icon"
+                        variant="outline"
+                        disabled={!selectedTask || !selectedItem}
+                        title={
+                          !selectedTask || !selectedItem
+                            ? "Select a task and item first"
+                            : "Start"
+                        }
+                      >
+                        <Play className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={pauseTimer}
+                        size="icon"
+                        variant="outline"
+                        title="Pause"
+                      >
+                        <Pause className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
-                      onClick={startTimer}
+                      onClick={() => resetTimer(focusMinutes)}
+                      size="icon"
+                      variant="outline"
+                      title="Reset"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      onClick={completeItem}
                       size="icon"
                       variant="outline"
                       disabled={!selectedTask || !selectedItem}
                       title={
                         !selectedTask || !selectedItem
                           ? "Select a task and item first"
-                          : "Start"
+                          : "Mark as completed"
                       }
                     >
-                      <Play className="h-4 w-4" />
+                      <Check className="h-4 w-4" />
                     </Button>
-                  ) : (
-                    <Button
-                      onClick={pauseTimer}
-                      size="icon"
-                      variant="outline"
-                      title="Pause"
-                    >
-                      <Pause className="h-4 w-4" />
-                    </Button>
-                  )}
-                  <Button
-                    onClick={() => resetTimer(focusMinutes)}
-                    size="icon"
-                    variant="outline"
-                    title="Reset"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    onClick={completeItem}
-                    size="icon"
-                    variant="outline"
-                    disabled={!selectedTask || !selectedItem}
-                    title={
-                      !selectedTask || !selectedItem
-                        ? "Select a task and item first"
-                        : "Mark as completed"
-                    }
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-muted-foreground">
-              {mode === "focus"
-                ? "Focus on your current task"
-                : "Take a break, you deserve it"}
-            </p>
-          </CardFooter>
-        </Card>
+            </CardContent>
+            <CardFooter className="flex justify-center">
+              <p className="text-sm text-muted-foreground">
+                {mode === "focus"
+                  ? "Focus on your current task"
+                  : "Take a break, you deserve it"}
+              </p>
+            </CardFooter>
+          </Card>
+        </div>
       </main>
     </div>
   );
