@@ -1,7 +1,5 @@
 "use client";
 
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,24 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ArrowLeft,
-  Play,
-  Pause,
-  RotateCcw,
-  Check,
-  ChevronDown,
-  Bell,
-  BellOff,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+import { Play, Pause, RotateCcw, Check, Bell, BellOff } from "lucide-react";
 import SidebarNav from "@/components/shared/sidebar-nav";
 import {
   Select,
