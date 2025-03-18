@@ -199,18 +199,6 @@ export default function PomodoroPage() {
   const selectedItem =
     selectedTask?.items.find((item) => item.id === selectedItemId) || null;
 
-  // Estados para el temporizador
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(true);
-  const [mode, setMode] = useState<"focus" | "break">("focus");
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
-  const [tick, setTick] = useState(0);
-
-  // Configuración de tiempos
-  const [focusMinutes, setFocusMinutes] = useState(25);
-  const [breakMinutes, setBreakMinutes] = useState(5);
-
   // Presets de tiempo
   const timePresets = [
     { focus: 25, break: 5, id: "Pomodoro" },
@@ -221,6 +209,27 @@ export default function PomodoroPage() {
 
   // Estado para el preset seleccionado
   const [selectedPreset, setSelectedPreset] = useState<string>("Demo");
+
+  // Estados para el temporizador
+  const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
+  const [mode, setMode] = useState<"focus" | "break">("focus");
+  const [secondsLeft, setSecondsLeft] = useState(() => {
+    const preset = timePresets.find((preset) => preset.id === selectedPreset);
+    return preset ? preset.focus * 60 : timePresets[0].focus * 60;
+  });
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [tick, setTick] = useState(0);
+
+  // Configuración de tiempos
+  const [focusMinutes, setFocusMinutes] = useState(() => {
+    const preset = timePresets.find((preset) => preset.id === selectedPreset);
+    return preset ? preset.focus : timePresets[0].focus;
+  });
+  const [breakMinutes, setBreakMinutes] = useState(() => {
+    const preset = timePresets.find((preset) => preset.id === selectedPreset);
+    return preset ? preset.break : timePresets[0].break;
+  });
 
   // Efecto para el temporizador
   useEffect(() => {
@@ -245,6 +254,7 @@ export default function PomodoroPage() {
   }, [isActive, isPaused, secondsLeft]);
 
   useEffect(() => {
+    if (!isActive || isPaused) return;
     setSecondsLeft((seconds) => {
       if (seconds <= 1) {
         // Cambiar de modo cuando el temporizador llega a cero
@@ -258,7 +268,7 @@ export default function PomodoroPage() {
       }
       return seconds - 1;
     });
-  }, [tick]);
+  }, [tick, isActive, isPaused]);
 
   useEffect(() => {
     if (!isSoundEnabled || !isActive || isPaused) return;
@@ -296,28 +306,11 @@ export default function PomodoroPage() {
     // Si es la primera vez que se inicia
     setIsActive(true);
     setIsPaused(false);
-
-    if (isSoundEnabled) {
-      if (mode === "focus") {
-        focusSound?.play();
-      } else {
-        breakSound?.play();
-      }
-    }
-
-    setSecondsLeft((seconds) => seconds - 1);
   };
 
   const pauseTimer = () => {
     setIsPaused(true);
   };
-
-  // const resetTimer = () => {
-  //   setIsActive(false);
-  //   setIsPaused(true);
-  //   setMode("focus");
-  //   setSecondsLeft(focusMinutes * 60);
-  // };
 
   const resetTimer = (minutes?: number) => {
     setIsActive(false);
@@ -329,12 +322,6 @@ export default function PomodoroPage() {
   const applyPreset = (presetId: string) => {
     const preset = timePresets.find((preset) => preset.id === presetId);
     if (preset) {
-      // setSelectedPreset(presetId);
-      // setFocusMinutes(preset.focus);
-      // setBreakMinutes(preset.break);
-      // setSecondsLeft(preset.focus * 60);
-      // resetTimer();
-
       setSelectedPreset(presetId);
       setFocusMinutes(preset.focus);
       setBreakMinutes(preset.break);
@@ -488,9 +475,6 @@ export default function PomodoroPage() {
                             disabled={isActive}
                           />
                         </div>
-                        {/* <Button onClick={resetTimer} className="w-full">
-                        Apply
-                      </Button> */}
                       </div>
                     </TabsContent>
                   </Tabs>
