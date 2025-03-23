@@ -16,7 +16,7 @@ class Task(models.Model):
 
 class Item(models.Model):
     title = models.CharField(max_length=200)
-    completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='items')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
