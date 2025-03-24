@@ -33,7 +33,7 @@ import {
   CalendarIcon,
   Plus,
 } from "lucide-react";
-
+import { useAuth } from "@/lib/hooks/useAuth";
 interface Item {
   id: string;
   title: string;
@@ -209,7 +209,11 @@ export default function DashboardPage() {
     }
   };
 
-  const handleLogout = () => router.push("/");
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
 
   const TaskCard = ({
     task,

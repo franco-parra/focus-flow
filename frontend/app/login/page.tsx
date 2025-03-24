@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   username: z.string(),
@@ -43,9 +45,9 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const defaultTab = searchParams.get("mode") === "signup" ? "signup" : "login";
   const [activeTab, setActiveTab] = useState(defaultTab);
-
+  const { login, isAuthenticating, authenticationError } = useAuth();
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
-    console.log(values);
+    await login(values);
   };
 
   const handleRegister = async (values: z.infer<typeof registerSchema>) => {
@@ -68,6 +70,12 @@ export default function LoginPage() {
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (authenticationError) {
+      toast.error(authenticationError);
+    }
+  }, [authenticationError]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
@@ -132,8 +140,12 @@ export default function LoginPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full">
-                    Sign In
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isAuthenticating}
+                  >
+                    {isAuthenticating ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
               </Form>
